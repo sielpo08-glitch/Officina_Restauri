@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello - Officina Restauri</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .navbar { background: #6db81e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; padding: 8px 15px; border-radius: 4px; }
+        .navbar a:hover { background: #5a9e18; }
+        .navbar h1 { color: white; font-size: 22px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .carrello-empty { text-align: center; padding: 50px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .carrello-empty a { display: inline-block; background: #6db81e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+        .carrello-content { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        .carrello-items { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .carrello-item { display: grid; grid-template-columns: 100px 1fr 100px; gap: 20px; padding: 20px; border-bottom: 1px solid #eee; align-items: center; }
+        .carrello-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; }
+        .carrello-item-info h3 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .carrello-item-info .prezzo { font-weight: bold; color: #6db81e; font-size: 16px; }
+        .carrello-item-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .qty-input { width: 60px; padding: 5px; text-align: center; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-rimuovi { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; }
+        .carrello-summary { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; }
+        .summary-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .summary-total { display: flex; justify-content: space-between; padding: 15px 0; font-weight: bold; font-size: 18px; color: #6db81e; }
+        .btn-checkout { width: 100%; background: #6db81e; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 20px; }
+        @media (max-width: 768px) { .carrello-content { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html">← Torna al Catalogo</a>
+        <h1>Il Tuo Carrello</h1>
+    </nav>
+    <div class="container">
+        <div id="carrello-empty" class="carrello-empty" style="display: none;">
+            <h2>Il tuo carrello è vuoto</h2>
+            <a href="index.html">Sfoglia i prodotti</a>
+        </div>
+        <div id="carrello-content" class="carrello-content" style="display: none;">
+            <div class="carrello-items" id="carrello-items"></div>
+            <div class="carrello-summary">
+                <h3>Riepilogo</h3>
+                <div class="summary-row"><span>Subtotale:</span> <span id="subtotale">€0,00</span></div>
+                <div class="summary-row"><span>Spedizione:</span> <span id="spedizione">€9,99</span></div>
+                <div class="summary-total"><span>Totale:</span> <span id="totale">€0,00</span></div>
+                <button class="btn-checkout" onclick="procediCheckout()">Paga Ora</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function caricaCarrello() {
+            const carrello = JSON.parse(localStorage.getItem('carrello')) || [];
+            const emptyDiv = document.getElementById('carrello-empty');
+            const contentDiv = document.getElementById('carrello-content');
+            if (carrello.length === 0) {
+                emptyDiv.style.display = 'block';
+                contentDiv.style.display = 'none';
+                return;
+            }
+            emptyDiv.style.display = 'none';
+            contentDiv.style.display = 'grid';
+            const itemsDiv = document.getElementById('carrello-items');
+            itemsDiv.innerHTML = '';
+            carrello.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'carrello-item';
+                div.innerHTML = `
+                    <img src="${item.immagine}" alt="${item.nome}">
+                    <div class="carrello-item-info">
+                        <h3>${item.nome}</h3>
+                        <p class="prezzo">€${parseFloat(item.prezzo).toFixed(2)}</p>
+                    </div>
+                    <div class="carrello-item-actions">
+                        <input type="number" class="qty-input" value="${item.quantita}" min="1" onchange="aggiornaQuantita(${index}, this.value)">
+                        <button class="btn-rimuovi" onclick="rimuoviDalCarrello(${index})">Rimuovi</button>
+                    </div>`;
+                itemsDiv.appendChild(div);
+            });
+            calcolaTotale();
+        }
+        function rimuoviDalCarrello(index) {
+            const carrello = JSON.parse(localStorage.getItem('carrello')) || [];
+            carrello.splice(index, 1);
+            localStorage.setItem('carrello', JSON.stringify(carrello));
+            caricaCarrello();
+        }
+        function aggiornaQuantita(index, qta) {
+            const carrello = JSON.parse(localStorage.getItem('carrello')) || [];
+            carrello[index].quantita = parseInt(qta);
+            localStorage.setItem('carrello', JSON.stringify(carrello));
+            calcolaTotale();
+        }
+        function calcolaTotale() {
+            const carrello = JSON.parse(localStorage.getItem('carrello')) || [];
+            let sub = 0;
+            carrello.forEach(i => sub += parseFloat(i.prezzo) * i.quantita);
+            const sped = sub > 0 ? 9.99 : 0;
+            document.getElementById('subtotale').textContent = '€' + sub.toFixed(2);
+            document.getElementById('spedizione').textContent = '€' + sped.toFixed(2);
+            document.getElementById('totale').textContent = '€' + (sub + sped).toFixed(2);
+        }
+        function procediCheckout() { alert('Ordine inviato con successo!'); localStorage.removeItem('carrello'); window.location.reload(); }
+        document.addEventListener('DOMContentLoaded', caricaCarrello);
+    </script>
+</body>
+</html>
