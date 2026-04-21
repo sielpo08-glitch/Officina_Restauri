@@ -1,203 +1,27 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Officina Restauri - Catalogo Vintage</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
-        .navbar {
-            background: #6db81e;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .navbar select {
-            background: #6db81e;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .navbar h1 {
-            color: white;
-            font-size: 22px;
-            margin-left: auto;
-        }
-        .catalogo {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            padding: 30px 20px;
-            background: #f5f5f5;
-        }
-        .prodotto-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .prodotto-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .prodotto-img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .prodotto-body {
-            padding: 0;
-        }
-        .prodotto-body h3 {
-            margin: 10px 0 5px;
-            font-size: 16px;
-            color: #333;
-        }
-        .prodotto-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        .prodotto-categoria {
-            background: #e8e8e8;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-        }
-        .prodotto-stato {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
-            margin: 8px 0;
-        }
-        .stato-restaurato {
-            background: #d4edda;
-            color: #155724;
-        }
-        .stato-da_restaurare {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .stato-custom {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        .prodotto-prezzi {
-            margin: 10px 0;
-            font-weight: bold;
-        }
-        .prezzo-base {
-            color: #6db81e;
-            font-size: 18px;
-        }
-        .prezzo-restauro {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            font-weight: normal;
-        }
-        .prodotto-rarita {
-            font-size: 12px;
-            color: #666;
-            margin: 8px 0;
-        }
-        .prodotto-descrizione {
-            font-size: 13px;
-            color: #666;
-            margin: 10px 0;
-            line-height: 1.4;
-        }
-        .btn-aggiungi-carrello,
-        button.dettagli {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        .btn-aggiungi-carrello {
-            background: #6db81e;
-            color: white;
-        }
-        .btn-aggiungi-carrello:hover {
-            background: #5a9e18;
-        }
-        button.dettagli {
-            background: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
-        }
-        button.dettagli:hover {
-            background: #e0e0e0;
-        }
-        .dettagli-completi {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 4px;
-            font-size: 13px;
-            display: none;
-        }
-        .dettagli-completi.show {
-            display: block;
-        }
-        .dettagli-completi p {
-            margin: 5px 0;
-        }
-        @media (max-width: 768px) {
-            .catalogo {
-                grid-template-columns: 1fr;
-            }
-            .navbar {
-                flex-wrap: wrap;
-            }
-            .navbar h1 {
-                width: 100%;
-                margin-left: 0;
-            }
-        }
-    </style>
+    <title>Officina Restauri | Catalogo</title>
+    <link rel="stylesheet" href="style_index.css">
 </head>
-
 <body>
     <nav class="navbar">
-        <select id="select" onchange="filtraProdotti(this.value)">
-            <option value="tutti" selected>⋮ Menu</option>
-            <option value="restaurato">Restaurati</option>
-            <option value="da_restaurare">Da restaurare</option>
-            <option value="custom">Custom</option>
-        </select>
-        <a href="carrello.html" style="margin-left: auto; background: #5a9e18; padding: 8px 15px; border-radius: 4px; color: white; text-decoration: none; font-weight: bold;">🛒 Carrello</a>
-        <h1>Officina Restauri - Catalogo Vintage</h1>
+        <h1>OFFICINA <b>RESTAURI</b></h1>
+        <div class="nav-controls">
+            <select id="select" onchange="filtraProdotti(this.value)">
+                <option value="tutti">Tutti i prodotti</option>
+                <option value="restaurato">Restaurati</option>
+                <option value="da_restaurare">Da restaurare</option>
+                <option value="custom">Progetti Custom</option>
+            </select>
+            <a href="carrello.html">🛒 Carrello</a>
+        </div>
     </nav>
 
-    <div class="catalogo" id="catalogo"></div>
+    <div class="catalogo" id="catalogo">
+        </div>
 
     <script src="index.js"></script>
 </body>
