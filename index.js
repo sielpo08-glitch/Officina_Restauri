@@ -34,20 +34,29 @@ function mostraProdotti(prodotti) {
     const catalogo = document.getElementById('catalogo');
     if (!catalogo) return;
     catalogo.innerHTML = '';
+
     prodotti.forEach(p => {
         const card = document.createElement('div');
         card.className = 'prodotto-card';
         card.innerHTML = `
-            <img src="${p.immagine_principale}" class="prodotto-img" onerror="this.src='https://via.placeholder.com/320x220'">
+            <div class="prodotto-img-container">
+                <img src="${p.immagine_principale}" 
+                     class="prodotto-img" 
+                     onerror="this.src='https://via.placeholder.com/400x300/2c3e50/e67e22?text=Immagine+non+disponibile'">
+            </div>
             <div class="prodotto-body">
                 <div class="prodotto-meta">
-                    <span class="prodotto-categoria">${p.categoria}</span>
+                    <span class="prodotto-categoria">${p.categoria.replace('categoria_', '')}</span>
                     <span>${p.anno_produzione}</span>
                 </div>
                 <h3>${p.nome_oggetto}</h3>
-                <p class="prodotto-stato stato-${p.stato}">${p.stato}</p>
-                <div class="prodotto-prezzi"><span class="prezzo-base">€${p.prezzo_base}</span></div>
-                <button class="btn-aggiungi-carrello" onclick="aggiungiAlCarrello('${p.nome_oggetto}', '${p.prezzo_base}', '${p.immagine_principale}')">Aggiungi al carrello</button>
+                <p class="prodotto-stato stato-${p.stato}">${p.stato.replace('_', ' ')}</p>
+                <div class="prodotto-prezzi">
+                    <span class="prezzo-base">€${p.prezzo_base}</span>
+                </div>
+                <button class="btn-aggiungi-carrello" onclick="aggiungiAlCarrello('${p.nome_oggetto.replace(/'/g, "\\'")}', '${p.prezzo_base}', '${p.immagine_principale}')">
+                    Aggiungi al carrello
+                </button>
             </div>`;
         catalogo.appendChild(card);
     });
